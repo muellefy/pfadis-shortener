@@ -1,0 +1,29 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      # Shown in the UI and embedded in every QR code — must match the public domain.
+      - BASE_URL=${BASE_URL:-https://s.pfadis.ch}
+      # If set, creating/listing/deleting links requires this key. Leave blank to disable.
+      - API_KEY=${API_KEY:-}
+      # Google sign-in (see README "Setting up Google sign-in"). Leave blank to disable.
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-}
+      - GOOGLE_ALLOWED_DOMAIN=${GOOGLE_ALLOWED_DOMAIN:-pfadis.ch}
+      - SESSION_SECRET=${SESSION_SECRET:-}
+    volumes:
+      - ./data:/app/data
+    # Published on localhost only — your reverse proxy (on the same host)
+    # can reach it at 127.0.0.1:3000. Nothing external can hit it directly.
+    ports:
+      - "127.0.0.1:3000:3000"
+    # Uncomment if your reverse proxy runs in Docker and you'd rather reach
+    # this container by name than via the host port above — see README.
+    # networks:
+    #   - proxy
+
+# networks:
+#   proxy:
+#     external: true
+#     name: <your-reverse-proxy-network-name>
