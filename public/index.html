@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>s.pfadis.ch — short links</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div id="authGate" class="key-gate hidden">
+    <div class="key-gate__card">
+      <h2>Trail pass required</h2>
+      <p>This board is locked. Sign in to create or manage links.</p>
+
+      <a id="googleSignIn" class="btn btn--primary btn--google hidden" href="/auth/google">
+        Sign in with Google
+      </a>
+
+      <form id="keyForm" class="key-gate__keyform hidden">
+        <input id="keyInput" type="password" placeholder="Access key" autocomplete="off" />
+        <button type="submit" class="btn btn--primary">Unlock</button>
+      </form>
+
+      <p id="keyError" class="error hidden"></p>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <div id="sessionBar" class="session-bar hidden">
+      <span id="sessionEmail"></span>
+      <button id="signOutBtn" class="btn btn--ghost">Sign out</button>
+    </div>
+    <header class="hero">
+      <p class="hero__mark">s.pfadis.ch</p>
+      <h1>Short links, waypoint&#8209;ready.</h1>
+      <p class="hero__sub">Paste a long link, get a short one on <strong>s.pfadis.ch</strong> and a QR code you can print on posters, badges or the next Weisung.</p>
+    </header>
+
+    <section class="composer" aria-label="Create a short link">
+      <form id="createForm" class="composer__form">
+        <div class="field field--grow">
+          <label for="urlInput">Destination URL</label>
+          <input id="urlInput" name="url" type="url" placeholder="https://pfadis.ch/…" required />
+        </div>
+        <div class="field">
+          <label for="codeInput">Custom code <span class="optional">optional</span></label>
+          <input id="codeInput" name="code" type="text" placeholder="lager2027" pattern="[a-zA-Z0-9_-]{3,32}" />
+        </div>
+        <button type="submit" class="btn btn--primary">Shorten link</button>
+      </form>
+      <p id="createError" class="error hidden"></p>
+    </section>
+
+    <section class="log" aria-label="Your short links">
+      <div class="log__head">
+        <h2>Waypoints</h2>
+        <span id="count" class="log__count"></span>
+      </div>
+      <div id="empty" class="empty hidden">
+        <p>No links yet. The trail starts above — shorten your first one.</p>
+      </div>
+      <ul id="list" class="list"></ul>
+    </section>
+  </main>
+
+  <template id="itemTemplate">
+    <li class="card">
+      <img class="card__qr" alt="QR code" width="88" height="88" />
+      <div class="card__body">
+        <a class="card__short" target="_blank" rel="noopener"></a>
+        <p class="card__dest"></p>
+        <div class="card__meta">
+          <span class="card__clicks"></span>
+          <span class="card__dot">&middot;</span>
+          <span class="card__date"></span>
+        </div>
+      </div>
+      <div class="card__actions">
+        <button class="btn btn--ghost" data-action="copy">Copy link</button>
+        <button class="btn btn--ghost" data-action="png">QR (PNG)</button>
+        <button class="btn btn--ghost" data-action="svg">QR (SVG)</button>
+        <button class="btn btn--ghost btn--danger" data-action="delete">Delete</button>
+      </div>
+    </li>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
