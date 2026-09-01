@@ -135,6 +135,51 @@ match wherever the app is actually reachable.
 Everything lives in one SQLite file at `./data/db.sqlite` on the host, via a
 Docker volume — back that file up if the links matter to you.
 
+## Publishing to Docker Hub
+ 
+By default `docker-compose.yml` builds the image locally (`build: .`). If
+you'd rather build once and pull a ready-made image on the server instead,
+push it to Docker Hub:
+ 
+```bash
+docker login
+docker build -t <dockerhub-username>/pfadis-shortener:latest .
+docker push <dockerhub-username>/pfadis-shortener:latest
+```
+ 
+Tag a version alongside `latest` if you want to be able to roll back
+(`-t <dockerhub-username>/pfadis-shortener:v1.0.0`, pushed the same way).
+ 
+If your build machine and server use different CPU architectures (e.g.
+building on an Intel/AMD machine but deploying to a Raspberry Pi), build a
+multi-arch image with buildx instead of a plain `docker build`:
+ 
+```bash
+docker buildx create --use --name multiarch 2>/dev/null || docker buildx use multiarch
+docker buildx build --platform linux/amd64,linux/arm64 \
+  -t <dockerhub-username>/pfadis-shortener:latest --push .
+```
+ 
+Then, on the server, swap the `build:` line for `image:` in
+`docker-compose.yml`:
+ 
+```yaml
+services:
+  app:
+    image: <dockerhub-username>/pfadis-shortener:latest
+    # build: .
+    ...
+```
+ 
+From then on, deploying an update is:
+ 
+```bash
+docker compose pull
+docker compose up -d
+```
+ 
+instead of `docker compose up -d --build`.
+
 ## Updating
 
 ```bash
